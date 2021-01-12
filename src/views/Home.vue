@@ -41,7 +41,7 @@
                   <div class="card-body">
                     <ul class="nav nav-pills flex-column">
                       <li @click="ProjectCreate = false, home = true, opened = false" class="text-left nav-item"><a href="#" class="nav-link" :class="{'active': home}" >Начало</a></li>
-                      <li @click="ProjectCreate = true, home = false, opened = false" class="text-left nav-item"><a :class="{'active': ProjectCreate}" class="nav-link">Добави нова проект</a></li>
+                      <li @click="ProjectCreate = true, home = false, opened = false" class="text-left nav-item"><a :class="{'active': ProjectCreate}" class="nav-link">Добави нов проект</a></li>
                       <li class="text-left nav-item"><a href="#" class="nav-link">Настройки на профила</a></li>
                     </ul>
                   </div>
@@ -51,6 +51,7 @@
           <div class="col-md-9" style="padding-top: 33px">
 
             <div v-if="home" class="projects">
+              <img v-if="!projects" style="width: 50%; position: relative; top: -33px;" src="../assets/welcome.png" alt="welcome">
               <div class="row">
                 <div v-for="(project, i) in projects" :key="i" class="col-md-6">
                   <div class="card card-primary">
@@ -76,6 +77,15 @@
 
             <Project v-if="opened" :id="projectID" :workingID="workOnID" :workStatus="workStatus"/>
 
+            <div class="d-flex">
+              <p class="mr-2">{{hour}}час</p>
+              <p class="mr-2">{{min}}мин</p>
+              <p class="mr-2">{{sec}}сек</p>
+            </div>
+
+            <button @click="timeStart">start</button>
+            <button @click="stopStart">stop</button>
+
           </div>
         </div>
       </div>
@@ -86,7 +96,7 @@
 import axios from 'axios'
 import { fb } from '../firebase'
 import { bus } from '../main'
-import ProjectCreate from '../components/HelloWorld.vue'
+import ProjectCreate from '../components/Create.vue'
 import Project from '../components/Project.vue'
 import Progress from '../components/Progress.vue'
 
@@ -94,7 +104,7 @@ export default {
   components: {
     ProjectCreate,
     Project,
-    Progress
+    Progress,
   },
   data() {
     return {
@@ -114,6 +124,15 @@ export default {
   computed: {
     status() {
       return this.$store.state.status
+    },
+    sec() {
+        return this.$store.state.sec
+    },
+    min() {
+        return this.$store.state.min
+    },
+    hour() {
+        return this.$store.state.hour
     }
   },
   watch: {
@@ -136,6 +155,14 @@ export default {
     }
   },
   methods: {
+    timeStart() {
+      let value = 'start'
+      this.$store.dispatch('startTime', value)
+    },
+    stopStart() {
+      let value = 'stop'
+      this.$store.dispatch('startTime', value)
+    },
     async userInfo() {
       let res = await axios.get(`https://manager-47e61-default-rtdb.firebaseio.com/users/${this.userID}.json`)
       this.user = res.data
@@ -161,14 +188,7 @@ export default {
     bus.$on('update', () => {this.fetchProjects()})
     bus.$on('reload', () => {this.showProjects()})
     this.fetchProjects();
-
   },
-
-  // Predpolagam shte izlezesh s nqkoe momche i shte mi kajesh
-  // I az shte te pitam kak e minalo i ti shte mi otgovorish 'mi normalno'
-  // Az shte te pitam shte izl li pak s nego i ti shte mi kajesh 'mi nz'
-  // Tova go napisax na 10 qnuari  v 23:41
-
 }
 </script>
 

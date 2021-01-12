@@ -35,7 +35,7 @@ export default {
     props: ['id', 'workingID', 'workStatus'],
     data() {
         return {
-            statusValue: this.workStatus
+            statusValue: ''
         }
     },
     computed: {
@@ -55,13 +55,15 @@ export default {
                 console.log(oldVal);
                 bus.$emit('reload')
             },
+        },
+        project() {
+            this.statusValue = this.project.status
         }
     },
     methods: {
         status() {
             let projectID = this.id
             let status = this.statusValue
-
             this.$store.dispatch('workingStatus', {projectID, status})
         },
         complete(name, i) {
@@ -74,8 +76,6 @@ export default {
     async created() {
         let projectID = this.id
         this.$store.dispatch('getProject', projectID)
-        console.log(this.workingID);
-        console.log(123);
     }
 }
 </script>

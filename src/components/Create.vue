@@ -74,7 +74,8 @@ export default {
       await axios.post('https://manager-47e61-default-rtdb.firebaseio.com/projects/.json', {
         name: this.name,
         description: this.description,
-        tasks: this.tasks
+        tasks: this.tasks,
+        status: 'pause'
       })
       bus.$emit('update')
     }
