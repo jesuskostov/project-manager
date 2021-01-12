@@ -22,6 +22,10 @@ export default new Vuex.Store({
   mutations: {
     SET_PROJECT: (state, project) => {
       state.project = project
+      let time = project.time.split(':');
+      state.hour = time[0]
+      state.min = time[1]
+      state.sec = time[2]
     },
     COMPLETE_TASK: (state, {taskID}) => {
       state.project.tasks[taskID].progress = true
@@ -54,15 +58,16 @@ export default new Vuex.Store({
       await db.ref('projects').child(`${projectID}`).child('status').set(status)
       commit('SET_STATUS', {projectID, status})
     },
-    startTime: ({state, commit}, value) => {
+    startTime: async ({state, commit}, {projectID, value}) => {
       
       if (value == 'start') {
         state.test = setInterval(() => {
           commit('SET_TIME')
         }, 1000)
       } else if (value == 'stop') {
-        // commit('SET_TIME')
         clearInterval(state.test)
+        let time = state.hour + ":" + state.min + ":" + state.sec
+        await db.ref('projects').child(`${projectID}`).child('time').set(time)
       }
     }
   },

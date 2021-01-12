@@ -75,7 +75,8 @@ export default {
         name: this.name,
         description: this.description,
         tasks: this.tasks,
-        status: 'pause'
+        status: 'pause',
+        time: '0:0:0'
       })
       bus.$emit('update')
     }

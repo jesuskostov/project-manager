@@ -6,8 +6,9 @@
             <div v-if="!workOnName" class="card border-top-none">
               <h1>Здравей, в момента не работиш върху нищо</h1>
             </div>
-            <div v-if="workOnName" class="card working border-top-none working alert-warning">
+            <div v-if="workOnName" class="card working border-top-none working alert-warning position-relative">
               <h1>В момента работиш върху - {{workOnName}}</h1>
+              <span class="alert bg-info time-label">{{hour}} час {{min}} мин {{sec}} сек</span>
             </div>
           </div>
         </div>
@@ -78,13 +79,8 @@
             <Project v-if="opened" :id="projectID" :workingID="workOnID" :workStatus="workStatus"/>
 
             <div class="d-flex">
-              <p class="mr-2">{{hour}}час</p>
-              <p class="mr-2">{{min}}мин</p>
-              <p class="mr-2">{{sec}}сек</p>
+              
             </div>
-
-            <button @click="timeStart">start</button>
-            <button @click="stopStart">stop</button>
 
           </div>
         </div>
@@ -155,14 +151,6 @@ export default {
     }
   },
   methods: {
-    timeStart() {
-      let value = 'start'
-      this.$store.dispatch('startTime', value)
-    },
-    stopStart() {
-      let value = 'stop'
-      this.$store.dispatch('startTime', value)
-    },
     async userInfo() {
       let res = await axios.get(`https://manager-47e61-default-rtdb.firebaseio.com/users/${this.userID}.json`)
       this.user = res.data
@@ -193,6 +181,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.time-label {
+    position: absolute;
+    top: 75%;
+    padding: 0.25rem 0.85rem;
+}
 .nav-item {
   cursor: pointer;
 }

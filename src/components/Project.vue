@@ -62,20 +62,31 @@ export default {
     },
     methods: {
         status() {
-            let projectID = this.id
-            let status = this.statusValue
-            this.$store.dispatch('workingStatus', {projectID, status})
+            let projectID = this.id;
+            let status = this.statusValue;
+            this.$store.dispatch('workingStatus', {projectID, status});
+
+            if (status == 'start') {
+                let value = 'start'
+                console.log(123);
+                this.$store.dispatch('startTime', {projectID, value})
+            }
+            if (status == 'pause') {
+                let value = 'stop'
+                console.log(1222);
+                this.$store.dispatch('startTime', {projectID, value})
+            }
         },
         complete(name, i) {
-            let projectID = this.id
-            let taskID = i
-            let taskName = name
-            this.$store.dispatch('completeTask', {projectID, taskID, taskName})
+            let projectID = this.id;
+            let taskID = i;
+            let taskName = name;
+            this.$store.dispatch('completeTask', {projectID, taskID, taskName});
         }
     },
     async created() {
-        let projectID = this.id
-        this.$store.dispatch('getProject', projectID)
+        let projectID = this.id;
+        this.$store.dispatch('getProject', projectID);
     }
 }
 </script>
