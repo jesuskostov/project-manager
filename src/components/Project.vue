@@ -1,5 +1,5 @@
 <template>
-    <div class="card">
+    <div class="card" :class="{'finished': statusValue == 'finished'}">
         <div class="card-header">
             <h4>{{project.name}}</h4>
             <div class="status">
@@ -12,7 +12,7 @@
             </div>
             <div class="card-body text-left">
             <p>{{project.description}}</p>
-            <div v-for="(task, i) in project.tasks" :key="i" class="alert alert-primary" :class="{'blur': workingID != id}">
+            <div v-for="(task, i) in project.tasks" :key="i" class="alert alert-primary" :class="{'blur': statusValue == 'pause'}">
                 <span @click="complete(task.name, i)" class="checkbox">
                     <div v-if="task.progress" class="check">
                         <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 76.887 55.552" style="enable-background:new 0 0 76.887 55.552;" xml:space="preserve">
@@ -38,6 +38,9 @@ export default {
             statusValue: ''
         }
     },
+    beforeDestroy() {
+        console.log(5555555);
+    },
     computed: {
         project() {
             return this.$store.state.project
@@ -54,6 +57,19 @@ export default {
                 console.log(val);
                 console.log(oldVal);
                 bus.$emit('reload')
+                
+                let falseArr = []
+                this.tasks.map( progress => {
+                    if (progress == false) {
+                        falseArr.push(progress)
+                    } 
+                })
+                if (falseArr.length == 0 || falseArr == []) {
+                    let projectID = this.id;
+                    let status = 'finished';
+                    this.statusValue = status
+                    this.$store.dispatch('workingStatus', {projectID, status});
+                }
             },
         },
         project() {
@@ -68,12 +84,10 @@ export default {
 
             if (status == 'start') {
                 let value = 'start'
-                console.log(123);
                 this.$store.dispatch('startTime', {projectID, value})
             }
             if (status == 'pause') {
                 let value = 'stop'
-                console.log(1222);
                 this.$store.dispatch('startTime', {projectID, value})
             }
         },
@@ -87,11 +101,18 @@ export default {
     async created() {
         let projectID = this.id;
         this.$store.dispatch('getProject', projectID);
-    }
+    },
 }
 </script>
 
 <style lang="scss" scoped>
+.finished {
+    border: 1px solid #47c363;
+    h4 {
+        color: #47c363;
+    }
+}
+
 .alert {
     transition: 1s;
 }

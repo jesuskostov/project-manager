@@ -56,10 +56,12 @@ export default new Vuex.Store({
     },
     workingStatus: async ({commit}, {projectID, status}) => {
       await db.ref('projects').child(`${projectID}`).child('status').set(status)
+      if (status == 'finished') {
+        await db.ref('projects').child(`${projectID}`).child('status').set(status)
+      }
       commit('SET_STATUS', {projectID, status})
     },
     startTime: async ({state, commit}, {projectID, value}) => {
-      
       if (value == 'start') {
         state.test = setInterval(() => {
           commit('SET_TIME')
@@ -68,7 +70,7 @@ export default new Vuex.Store({
         clearInterval(state.test)
         let time = state.hour + ":" + state.min + ":" + state.sec
         await db.ref('projects').child(`${projectID}`).child('time').set(time)
-      }
+      } 
     }
   },
   modules: {

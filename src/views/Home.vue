@@ -146,7 +146,9 @@ export default {
         this.workOnName = ''
         this.workOnID = null
         this.workStatus = status
-      } 
+      } else if (status == 'finished') {
+        this.workStatus = status
+      }
 
     }
   },
@@ -171,6 +173,8 @@ export default {
       if (user) {
         this.userID = user.uid
         this.userInfo();
+      } else {
+        this.$router.push('/register')
       }
     })
     bus.$on('update', () => {this.fetchProjects()})
