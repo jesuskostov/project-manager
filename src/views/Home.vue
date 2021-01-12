@@ -174,7 +174,7 @@ export default {
         this.userID = user.uid
         this.userInfo();
       } else {
-        this.$router.push('/register')
+        this.$router.push('/')
       }
     })
     bus.$on('update', () => {this.fetchProjects()})

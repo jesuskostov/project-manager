@@ -100,7 +100,7 @@ export default {
         image: this.image
       })
       this.loading = false
-      this.$router.push('/')
+      this.$router.push('/dashboard')
     },
     onPickFile() {
       this.$refs.fileInput.click();
@@ -129,7 +129,7 @@ export default {
   created() {
     fb.auth().onAuthStateChanged( user => {
       if (user) {
-        this.$router.push('/')
+        this.$router.push('/dashboard')
       }
     })
   }
