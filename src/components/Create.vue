@@ -6,28 +6,29 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h4>Нов проект</h4>
+                <h4><span v-if="!name">Нов проект</span><span v-else>{{ name }}</span></h4>
               </div>
               <div class="card-body">
                 <div class="form-group row mb-4">
-                  <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Заглавие</label>
-                  <div class="col-sm-12 col-md-7">
+                  <label class="col-form-label col-12 col-md-3 col-lg-12">Заглавие</label>
+                  <div class="col-sm-12 col-md-12">
                     <input type="text" class="form-control" v-model="name" required>
                   </div>
                 </div>
                 <div class="form-group row mb-4">
-                  <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Описание</label>
-                  <div class="col-sm-12 col-md-7">
-                    <textarea class="summernote-simple" v-model="description" required></textarea>
+                  <label class="col-form-label col-12 col-md-3 col-lg-12">Описание</label>
+                  <div class="col-sm-12 col-md-12">
+                    <!-- <textarea class="summernote-simple" v-model="description" required></textarea> -->
+                    <VueEditor class="summernote-simple" v-model="description" required />
                   </div>
                 </div>
-                <div class="form-group row mb-4">
-                  <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Стъпки</label>
-                  <div class="col-sm-12 col-md-7">
+                <!-- <div class="form-group row mb-4">
+                  <label class="col-form-label col-12 col-md-3 col-lg-12">Стъпки</label>
+                  <div class="col-sm-12 col-md-12">
                     <input type="text" class="form-control inputtags mb-2" v-model="taskName" v-on:keydown.enter.prevent="addTask" placeholder="Въведи нова стъпка и натисни Enter...">
                     <span v-for="(task, i) in tasks" :key="i" class="badge badge-primary mr-2 mb-2">{{task.name}}<span class="badge badge-danger" @click="deleteTask(task)">X</span></span>
                   </div>
-                </div>
+                </div> -->
                 <div class="form-group row mb-4">
                   <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3"></label>
                   <div class="col-sm-12 col-md-7">
@@ -46,6 +47,7 @@
 <script>
 import axios from 'axios'
 import { bus } from '../main'
+import { VueEditor } from "vue2-editor";
 
 export default {
   name: 'ProjectCreate',
@@ -55,28 +57,30 @@ export default {
       name: '',
       description: '',
       taskName: '',
-      tasks: []
     }
   },
+  components: {
+    VueEditor
+  },
   methods: {
-    addTask() {
-      this.tasks.push({'name': this.taskName, 'progress': false})
-      this.taskName = ''
-    },
-    deleteTask(task) {
-      const index = this.tasks.indexOf(task);
-      if (index > -1) {
-        this.tasks.splice(index, 1);
-      }
-    },
+    // addTask() {
+    //   this.tasks.push({'name': this.taskName, 'progress': false})
+    //   this.taskName = ''
+    // },
+    // deleteTask(task) {
+    //   const index = this.tasks.indexOf(task);
+    //   if (index > -1) {
+    //     this.tasks.splice(index, 1);
+    //   }
+    // },
     async addProject() {
       this.loading = true
       await axios.post('https://manager-47e61-default-rtdb.firebaseio.com/projects/.json', {
         name: this.name,
         description: this.description,
-        tasks: this.tasks,
+        progress: 0,
         status: 'pause',
-        time: '0:0:0'
+        comments: []
       })
       bus.$emit('update')
     }

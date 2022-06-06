@@ -14,18 +14,11 @@ export default new Vuex.Store({
   state: {
     project: '',
     status: '',
-    sec: 0,
-    min: 0,
-    hour: 0,
     test: 'test'
   },
   mutations: {
     SET_PROJECT: (state, project) => {
       state.project = project
-      let time = project.time.split(':');
-      state.hour = time[0]
-      state.min = time[1]
-      state.sec = time[2]
     },
     COMPLETE_TASK: (state, {taskID}) => {
       state.project.tasks[taskID].progress = true
@@ -33,15 +26,6 @@ export default new Vuex.Store({
     SET_STATUS: (state, data) => {
       state.status = data
     },
-    SET_TIME: (state) => {
-      // // Seconds
-      state.sec++
-      if (state.sec == 5) {
-        state.sec = 0
-        // Minutes
-        state.min++
-      }
-    }
   },
   actions: {
     getProject: async ({commit}, projectID) => {
@@ -61,16 +45,20 @@ export default new Vuex.Store({
       }
       commit('SET_STATUS', {projectID, status})
     },
-    startTime: async ({state, commit}, {projectID, value}) => {
-      if (value == 'start') {
-        state.test = setInterval(() => {
-          commit('SET_TIME')
-        }, 1000)
-      } else if (value == 'stop') {
-        clearInterval(state.test)
-        let time = state.hour + ":" + state.min + ":" + state.sec
-        await db.ref('projects').child(`${projectID}`).child('time').set(time)
-      } 
+    setProgress: async ({commit}, {projectID, progress}) => {
+      await axios.patch(`https://manager-47e61-default-rtdb.firebaseio.com/projects/${projectID}/.json`, {progress: progress})
+      let res = await axios.get(`https://manager-47e61-default-rtdb.firebaseio.com/projects/${projectID}.json`)
+      commit('SET_PROJECT', res.data)
+    },
+    newComment:  async ({commit}, {taskID, user, comment}) => {
+      await axios.post(`https://manager-47e61-default-rtdb.firebaseio.com/projects/${taskID}/comments/.json`, {
+        name: user.name,
+        avatar: user.image,
+        text: comment
+      })
+      let res = await axios.get(`https://manager-47e61-default-rtdb.firebaseio.com/projects/${taskID}.json`)
+      commit('SET_PROJECT', res.data)
+      // commit('SET_PROGRESS', {projectID, progress})
     }
   },
   modules: {
